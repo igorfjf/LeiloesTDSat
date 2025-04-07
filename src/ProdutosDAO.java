@@ -1,4 +1,3 @@
-
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -11,16 +10,16 @@ public class ProdutosDAO {
     Connection conn;
     PreparedStatement prep;
     ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
     public int cadastrarProduto(ProdutosDTO produto) {
         conn = new conectaDAO().connectDB();
 
         int status;
         try {
-            prep = conn.prepareStatement("INSERT INTO produtos(nome, valor) VALUES(?,?)");
+            prep = conn.prepareStatement("INSERT INTO produtos(nome, valor, status) VALUES(?,?, ?)");
             prep.setString(1, produto.getNome());
             prep.setInt(2, produto.getValor());
+            prep.setString(3, produto.getStatus());
 
             status = prep.executeUpdate();
             return status;
@@ -31,28 +30,30 @@ public class ProdutosDAO {
     }
 
     public ArrayList<ProdutosDTO> listarProdutos() {
+        conn = new conectaDAO().connectDB(); // CORREÇÃO: inicializar conexão aqui
+
         String sql = "SELECT * FROM produtos";
         ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
         try {
-            PreparedStatement stmt = this.conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                ProdutosDTO produtos = new ProdutosDTO();
+                ProdutosDTO produto = new ProdutosDTO();
 
-                produtos.setId(rs.getInt("id"));
-                produtos.setNome(rs.getString("nome"));
-                produtos.setValor(rs.getInt("valor"));
-                produtos.setStatus(rs.getString("status"));
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
 
-                listagem.add(produtos);
-
+                listagem.add(produto);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return listagem;
     }
 }
