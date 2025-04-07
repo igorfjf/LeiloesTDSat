@@ -1,4 +1,6 @@
 public class cadastroVIEW extends javax.swing.JFrame {
+    // Criada a tela de vendas
+
 
     public cadastroVIEW() {
         initComponents();
